@@ -51,4 +51,4 @@ cuda_IndRNN_onlyrecurrent.py, Indrnn_plainnet.py, opts.py, utils.py来自[Github
 第二层全连接层：输入200，输出80  
 激活函数为ReLu函数，学习率设置为1e-4，训练采用交叉熵函数和Adam优化器。<br>
 
-以上训练测试结果截图在readme.doc中。
+以上训练测试结果截图在readme.docx中。
