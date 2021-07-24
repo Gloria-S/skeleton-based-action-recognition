@@ -27,7 +27,6 @@ class my_dataset(Dataset):
                 self.label_list.append(int(temp[0]))
                 sample = np.load(temp[1]).transpose((0, 4, 2, 3, 1))  # batchsize，单双人，帧数，关节，坐标
                 # print(sample.shape)
-                # sample = np.pad(sample, ((0, 0), (0, 0), (0, 320 - sample.shape[2]), (0, 0), (0, 0)))
                 sample=sample[:,:,0:40,:,:]
                 self.skeleton_list.append(sample[0][0])
                 if sample[0][1].all() != 0.0:
@@ -51,14 +50,13 @@ def define_model(D_in, H, D_out):
         torch.nn.Linear(H, D_out)
     )
 
-    class Net(nn.Module):  # 我们定义网络时一般是继承的torch.nn.Module创建新的子类
+    class Net(nn.Module):
         def __init__(self):
             super(Net, self).__init__()
-            # self.conv=nn.Conv2d(320, 40, 1)  # 降维
             self.conv1 = nn.Conv2d(40, 80, 2)
             #self.pool = nn.MaxPool2d(2, 2)  # 最大池化层
             self.conv2 = nn.Conv2d(80, 60, 2)  # 同样是卷积层
-            self.fc1 = nn.Linear(36 * 5 * 5, 200)  # 接着两个全连接层 修改后的正确的代码
+            self.fc1 = nn.Linear(36 * 5 * 5, 200)  # 接着两个全连接层
             self.fc2 = nn.Linear(200, 80)
 
         def forward(self, x):
@@ -67,7 +65,7 @@ def define_model(D_in, H, D_out):
             # print(x.size())
             x = F.relu(self.conv2(x))
             # print(x.size())
-            x = x.view(-1, 36 * 5 * 5)  # 修改后的正确的代码
+            x = x.view(-1, 36 * 5 * 5) 
             # print(x.size())
 
             x = F.relu(self.fc1(x))
@@ -162,6 +160,4 @@ if __name__ == '__main__':
 
     for epoch in range(0,5):
         net, running_loss, running_acc = train(train_loader, net, Loss, optimizer, epoch)
-        #net_path = 'D:/作业pycharm/姿态分类/net.pth'
-        #torch.save(net, net_path)
         test(test_loader, net, Loss, running_loss, running_acc)
